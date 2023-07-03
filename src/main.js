@@ -5,9 +5,17 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import axios from 'axios'
+import md5 from 'js-md5'
+import VueCookies from 'vue-cookies'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.prototype.$http = axios
+// gateway
+axios.defaults.baseURL = 'http://127.0.0.1:20000/'
+Vue.prototype.$md5 = md5
+Vue.use(VueCookies)
 
 /* eslint-disable no-new */
 new Vue({
