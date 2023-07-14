@@ -84,12 +84,18 @@
 </template>
 
 <script>
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'asd',
+      blob: 'blob'
     }
+  },
+  created: function () {
+    this.pid = this.$route.query.pid
+    console.log('pid: ' + this.pid)
   }
 }
 </script>
