@@ -1,14 +1,14 @@
 <template>
 <body>
-  <el-row>
-    <el-col id="paperZone" :span=12>
+  <h3>Edit Note</h3>
+  <el-row type="flex" justify="space-around">
+    <el-col class="wrapper" :span=12>
       <iframe id="pdfShower" :src='blob' />
     </el-col>
-    <el-col id="noteZone" :span=12>
-      <template>
-        <v-md-editor v-model="note" height="1000px" @save="saveOrUpdateNote"></v-md-editor>
-        <!-- <v-md-preview :text="text" height="1000px"></v-md-preview> -->
-      </template>
+    <el-col class="wrapper" :span=12>
+      <div id="noteEditor">
+        <v-md-editor v-model="note" @save="saveOrUpdateNote"></v-md-editor>
+      </div>
     </el-col>
   </el-row>
 </body>
@@ -26,7 +26,7 @@ export default {
       note: ''
     }
   },
-  created: function () {
+  created () {
     this.pid = this.$route.query.pid
     this.uid = this.$route.query.uid
     this.blob = this.$route.query.blob
@@ -62,6 +62,11 @@ export default {
         })
         .then(res => {
           console.log(res)
+          this.$notify({
+            title: '已保存',
+            type: 'success',
+            duration: 1500
+          })
         })
         .catch(err => {
           console.log(err)
@@ -75,15 +80,9 @@ export default {
 <style scoped>
 
 html,
-body,
-#WriteNote {
-  font-family: "微软雅黑",Arial,sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  background-attachment: fixed;
+body {
   padding: 0px;
+  margin: 0px;
   height: 100%;
   width: 100%;
   /* background-color: #eceff6; */
@@ -99,17 +98,25 @@ body,
   border-radius: 0px;
 }
 
-#paperZone {
-    background-color: #ffffff;
-}
-
-#noteZone {
-    background-color: #ffffff;
+.wrapper {
+  padding: 1px;
+  background-color: #efd7b3;
+  height: 1000px;
 }
 
 #pdfShower {
-  height: 1000px;
+  height: 100%;
   width: 100%;
+  border-width: 0px;
+}
+
+#noteEditor {
+    background-color: #ffffff;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    /* max-height: 1000px; */
+    text-align: left;
 }
 
 </style>

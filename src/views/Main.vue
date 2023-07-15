@@ -135,7 +135,7 @@
         <!-- 上传文章 -->
         <el-row v-if="active === 'upload_paper'" type="flex" justify="center">
           <el-col :span="20">
-            <div id="uploadWrapper">
+            <div class="wrapper">
               <el-form id="uploadForm" ref="form" :rules="uploadRules" :model="uploadForm" label-width="150px" label-position="left" align="left">
                 <el-form-item label="文章标题" prop="titles">
                   <el-input v-model="uploadForm.title"></el-input>
@@ -191,7 +191,7 @@
         <!-- paper列表展示 -->
         <el-row v-if="active === 'search_paper'" type="flex" justify="center">
           <el-col :span="20">
-            <div id="paperListWrapper" class="paperDisplay">
+            <div class="paperDisplay wrapper">
               <el-table id="paperListTable"
                 :data="paperList" :show-header="showHeader">
                 <el-table-column  prop="item">
@@ -260,6 +260,7 @@
                     <!-- 文章阅读 -->
                     <div>
                       <iframe
+                        class='wrapper'
                         :src='blob'
                         width="100%"
                         height="1000px"
@@ -271,20 +272,35 @@
                   <el-col :span="24">
                     <!-- 笔记列表 -->
                     <div id="noteListDiv">
+                      <h3>
+                        我的笔记&nbsp;&nbsp;
+                        <el-tooltip content="编辑"><el-button icon="el-icon-edit" @click="writeNote" circle></el-button></el-tooltip>
+                        <el-tooltip content="阅读"><el-button icon="el-icon-reading" @click="readNote(myNotes[0].html)" circle></el-button></el-tooltip>
+                      </h3>
                       <!-- 我的笔记 -->
-                      <div>
-                        <span>我的笔记</span>
+                      <div class="wrapper">
+                        <el-table id="myNotesListTable"
+                          :data="myNotes" :show-header="showHeader">
+                          <el-table-column  prop="item">
+                            <template slot-scope="scope">
+                              <div class="notePreviewWrapper">
+                                <div class="notePreview" v-html="scope.row.html"></div>
+                              </div>
+                            </template>
+                          </el-table-column>
+                        </el-table>
                       </div>
                       <el-divider></el-divider>
                       <!-- 其他笔记 -->
-                      <div>
-                        <el-table id="noteListTable"
-                          :data="noteList" :show-header="showHeader">
+                      <h3>其他用户的笔记</h3>
+                      <div class="wrapper">
+                        <el-table id="othersNotesListTable"
+                          :data="othersNotes" :show-header="showHeader">
                           <el-table-column  prop="item">
                             <template slot-scope="scope">
                               <h3>
                                 <span class="username">{{scope.row.uname}}</span> 的笔记&nbsp;&nbsp;
-                                <el-tooltip content="全屏显示"><el-button icon="el-icon-full-screen" @click="fullScreenNote(scope.row.html)" circle></el-button></el-tooltip>
+                                <el-tooltip content="阅读"><el-button icon="el-icon-reading" @click="readNote(scope.row.html)" circle></el-button></el-tooltip>
                               </h3>
                               <div class="notePreviewWrapper">
                                 <div class="notePreview" v-html="scope.row.html"></div>
@@ -293,7 +309,6 @@
                           </el-table-column>
                         </el-table>
                       </div>
-                      <button @click="writeNote">写笔记</button>
                     </div>
                   </el-col>
 
@@ -372,6 +387,8 @@ export default {
       tabPosition: 'left',
       paperList: [],
       noteList: [],
+      myNotes: [],
+      othersNotes: [],
       pageSize: 10,
       showHeader: false,
       showSide: true,
@@ -748,13 +765,25 @@ export default {
       .then(res => {
         console.log(res)
         this.noteList = res.data.note_list
+        this.myNotes = []
+        this.othersNotes = []
+        for (let i = 0; i < this.noteList.length; i++) {
+          const note = this.noteList[i];
+          const uid = note.uid
+          if (uid === this.uid) {
+            // myself note
+            this.myNotes.push(note)
+          } else this.othersNotes.push(note)
+        }
+        console.log('my notes: ' + this.myNotes.length)
+        console.log('others notes: ' + this.othersNotes.length)
       })
       .catch(err => {
         console.log(err)
       })
     },
     // 全屏显示笔记
-    fullScreenNote: function (html) {
+    readNote: function (html) {
       console.log('full screen note')
       let routeUrl = this.$router.resolve({
         path: "/read_note",
@@ -773,11 +802,6 @@ export default {
 html,
 body,
 #main {
-  font-family: "微软雅黑",Arial,sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
   background: url("~@/assets/bg15.jpg");
   background-size: 100% 100%;
   background-attachment: fixed;
@@ -840,18 +864,13 @@ body,
   min-width: 0px;
 }
 
-#paperListWrapper {
-  padding: 5px;
+.wrapper {
+  padding: 1px;
   background-color: #efd7b3;
 }
 
 #paperListTable {
   padding: 20px;
-}
-
-#uploadWrapper {
-  padding: 5px;
-  background-color: #efd7b3;
 }
 
 #uploadForm {
@@ -876,14 +895,13 @@ body,
   /* scale: 0.2; */
 }
 
-#noteListTable {
-  /* padding: 20px; */
-  height: 1000px;
-}
-
 .username {
   color: #907afa;
   font-style: oblique;
+}
+
+iframe {
+  border-width: 0px;
 }
 
 </style>

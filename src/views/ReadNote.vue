@@ -1,11 +1,12 @@
 <template>
 <body>
-  <el-row>
-    <el-col id="paperZone" :span=12>
+  <h3>Reading Note</h3>
+  <el-row type="flex" justify="space-around">
+    <el-col id="paperZone" class="wrapper" :span=11>
       <iframe id="pdfShower" :src='blob' />
     </el-col>
-    <el-col id="noteZone" :span=12>
-      <div v-html="html"></div>
+    <el-col class="wrapper" :span=11>
+      <div id="noteShower" v-html="html"></div>
     </el-col>
   </el-row>
 </body>
@@ -34,16 +35,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-html,
-body,
-#ReadNote {
-  font-family: "微软雅黑",Arial,sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  background-attachment: fixed;
+body {
   padding: 0px;
+  margin: 0px;
   height: 100%;
   width: 100%;
   /* background-color: #eceff6; */
@@ -59,20 +53,25 @@ body,
   border-radius: 0px;
 }
 
-#paperZone {
-    background-color: #ffffff;
-}
-
-#noteZone {
-    background-color: #ffffff;
-    overflow: auto;
-    max-height: 1000px;
-    text-align: left;
+.wrapper {
+  padding: 1px;
+  background-color: #efd7b3;
+  height: 1000px;
 }
 
 #pdfShower {
-  height: 1000px;
+  height: 100%;
   width: 100%;
+  border-width: 0px;
+}
+
+#noteShower {
+    background-color: #ffffff;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    /* max-height: 1000px; */
+    text-align: left;
 }
 
 </style>
